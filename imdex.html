@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en" class="bg-white text-gray-900 dark:bg-gray-900 dark:text-white transition-colors duration-500">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light dark" />
+    <title>One Sentence Wisdom</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.4.1/dist/tailwind.min.css" rel="stylesheet" />
+    <style>
+      .animated-bg {
+        background: linear-gradient(270deg, #a78bfa, #60a5fa, #34d399, #f472b6);
+        background-size: 800% 800%;
+        animation: gradientFlow 30s ease infinite;
+      }
+      @keyframes gradientFlow {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+      }
+      @keyframes slowSpin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+      .animate-slow-spin {
+        animation: slowSpin 1.5s linear infinite;
+      }
+    </style>
+  </head>
+  <body class="min-h-screen flex flex-col items-center justify-center animated-bg text-center px-4">
+    
+    <!-- Dark Mode Toggle -->
+    <button
+      id="toggle-dark"
+      class="absolute top-4 right-4 p-2 rounded-lg backdrop-blur bg-white/30 dark:bg-white/10 hover:bg-white/40 transition"
+      title="Toggle Dark Mode">
+      🌗
+    </button>
+
+    <!-- Quote -->
+    <div id="quote-container" class="relative max-w-3xl min-h-[150px] flex items-center justify-center">
+      <p id="wisdom-text" class="text-3xl sm:text-4xl md:text-5xl font-medium leading-relaxed transition-opacity duration-500 text-white"></p>
+      <div id="loader" class="absolute inset-0 flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="w-6 h-6 border-2 border-t-transparent border-white/70 dark:border-white/40 rounded-full animate-slow-spin"></div>
+      </div>
+    </div>
+
+    <!-- Image -->
+    <div id="art-container" class="mt-10 opacity-0 transition-opacity duration-700 max-w-[90vw] max-h-[60vh]">
+      <img id="art-image" class="rounded-2xl mx-auto shadow-xl max-h-[60vh] object-contain" src="" alt="Artwork" />
+      <p id="art-title" class="mt-2 text-sm text-white/60 italic"></p>
+    </div>
+
+    <!-- Button -->
+    <button
+      onclick="loadWisdom()"
+      class="mt-10 px-6 py-3 text-lg font-medium rounded-full backdrop-blur bg-white/30 dark:bg-white/10 hover:bg-white/40 dark:hover:bg-white/20 transition transform hover:-translate-y-1">
+      Next Wisdom ✨
+    </button>
+
+    <!-- Footer -->
+    <footer class="mt-12 text-sm text-white/70">
+      Made with 💜 and Met Art
+    </footer>
+
+    <script>
+      const wisdomText = document.getElementById("wisdom-text");
+      const loader = document.getElementById("loader");
+      const artImage = document.getElementById("art-image");
+      const artTitle = document.getElementById("art-title");
+      const artContainer = document.getElementById("art-container");
+
+      const fallbackWisdom = [
+        "Be here now.",
+        "This too shall pass.",
+        "Let go or be dragged.",
+        "The quieter you become, the more you can hear.",
+        "Less is more.",
+        "Do one thing at a time.",
+        "Inhale peace, exhale doubt.",
+        "Simplicity is the ultimate sophistication.",
+        "Stillness speaks.",
+        "Let it be.",
+        "Flow with the river, not against it.",
+        "Be like water.",
+        "The present moment is enough.",
+        "Softness is strength.",
+        "Breathe, and let go.",
+        "Accept what is.",
+        "Trust the process.",
+      ];
+
+      const searchTerms = ["peace", "stillness", "cloud", "sky", "tree", "light", "nature", "calm", "meditation"];
+
+      async function loadWisdom() {
+        loader.classList.remove("opacity-0", "pointer-events-none");
+        wisdomText.classList.add("opacity-0");
+        artContainer.classList.remove("opacity-100");
+        artContainer.classList.add("opacity-0");
+
+        try {
+          const [quote, imageData] = await Promise.all([getQuote(), getArtwork()]);
+          setTimeout(() => {
+            wisdomText.textContent = quote;
+            wisdomText.classList.remove("opacity-0");
+            artImage.src = imageData.image;
+            artTitle.textContent = imageData.title || "";
+            artContainer.classList.add("opacity-100");
+            loader.classList.add("opacity-0", "pointer-events-none");
+          }, 400);
+        } catch (e) {
+          wisdomText.textContent = getFallback();
+          loader.classList.add("opacity-0", "pointer-events-none");
+        }
+      }
+
+      async function getQuote() {
+        const res = await fetch("https://api.adviceslip.com/advice", { cache: "no-store" });
+        const data = await res.json();
+        return data?.slip?.advice ?? getFallback();
+      }
+
+      function getFallback() {
+        return fallbackWisdom[Math.floor(Math.random() * fallbackWisdom.length)];
+      }
+
+      async function getArtwork() {
+        const term = searchTerms[Math.floor(Math.random() * searchTerms.length)];
+        const searchUrl = `https://collectionapi.metmuseum.org/public/collection/v1/search?hasImages=true&q=${term}`;
+        const res = await fetch(searchUrl);
+        const data = await res.json();
+        if (!data.objectIDs || data.objectIDs.length === 0) {
+          return { image: "", title: "" };
+        }
+        const randomId = data.objectIDs[Math.floor(Math.random() * data.objectIDs.length)];
+        const objRes = await fetch(`https://collectionapi.metmuseum.org/public/collection/v1/objects/${randomId}`);
+        const objData = await objRes.json();
+        return {
+          image: objData.primaryImageSmall || "",
+          title: objData.title || "",
+        };
+      }
+
+      // Initial
+      loadWisdom();
+
+      // Dark Mode Toggle
+      const toggleDark = document.getElementById("toggle-dark");
+      const html = document.documentElement;
+      const savedTheme = localStorage.getItem("theme");
+      if (savedTheme === "dark") html.classList.add("dark");
+      toggleDark.addEventListener("click", () => {
+        html.classList.toggle("dark");
+        localStorage.setItem("theme", html.classList.contains("dark") ? "dark" : "light");
+      });
+    </script>
+  </body>
+</html>
