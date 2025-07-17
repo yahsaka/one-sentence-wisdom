@@ -1,157 +1,133 @@
 <!DOCTYPE html>
-<html lang="en" class="bg-white text-gray-900 dark:bg-gray-900 dark:text-white transition-colors duration-500">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="color-scheme" content="light dark" />
-    <title>One Sentence Wisdom</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.4.1/dist/tailwind.min.css" rel="stylesheet" />
-    <style>
-      .animated-bg {
-        background: linear-gradient(270deg, #a78bfa, #60a5fa, #34d399, #f472b6);
-        background-size: 800% 800%;
-        animation: gradientFlow 30s ease infinite;
-      }
-      @keyframes gradientFlow {
-        0% { background-position: 0% 50%; }
-        50% { background-position: 100% 50%; }
-        100% { background-position: 0% 50%; }
-      }
-      @keyframes slowSpin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-      }
-      .animate-slow-spin {
-        animation: slowSpin 1.5s linear infinite;
-      }
-    </style>
-  </head>
-  <body class="min-h-screen flex flex-col items-center justify-center animated-bg text-center px-4">
-    
-    <!-- Dark Mode Toggle -->
-    <button
-      id="toggle-dark"
-      class="absolute top-4 right-4 p-2 rounded-lg backdrop-blur bg-white/30 dark:bg-white/10 hover:bg-white/40 transition"
-      title="Toggle Dark Mode">
-      🌗
-    </button>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>One Sentence Wisdom</title>
 
-    <!-- Quote -->
-    <div id="quote-container" class="relative max-w-3xl min-h-[150px] flex items-center justify-center">
-      <p id="wisdom-text" class="text-3xl sm:text-4xl md:text-5xl font-medium leading-relaxed transition-opacity duration-500 text-white"></p>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Dancing Script Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@500&display=swap" rel="stylesheet" />
+
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+    #wisdom-text {
+      font-family: 'Dancing Script', cursive;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#dbeafe] via-[#f0fdf4] to-[#fef9c3] dark:from-[#0f172a] dark:via-[#1e293b] dark:to-[#111827] text-center px-4 transition-colors duration-500">
+
+  <!-- Dark Mode Toggle -->
+  <button
+    id="toggle-dark"
+    class="absolute top-4 right-4 p-2 rounded-full backdrop-blur bg-white/30 dark:bg-white/10 hover:bg-white/40 transition"
+    title="Toggle Dark Mode">
+    🌓
+  </button>
+
+  <div class="max-w-3xl w-full space-y-10">
+
+    <!-- Quote Container -->
+    <div id="quote-container" class="relative bg-white/30 dark:bg-white/10 backdrop-blur-lg p-8 rounded-2xl shadow-md transition-all min-h-[150px]">
+      <p id="wisdom-text" class="text-3xl sm:text-4xl md:text-5xl text-gray-900 dark:text-white leading-relaxed sm:leading-loose transition-opacity duration-500 whitespace-pre-line flex flex-wrap justify-center gap-x-2 gap-y-4"></p>
       <div id="loader" class="absolute inset-0 flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300">
-        <div class="w-6 h-6 border-2 border-t-transparent border-white/70 dark:border-white/40 rounded-full animate-slow-spin"></div>
+        <div class="w-6 h-6 border-2 border-t-transparent border-gray-800 dark:border-white rounded-full animate-spin"></div>
       </div>
     </div>
 
-    <!-- Image -->
-    <div id="art-container" class="mt-10 opacity-0 transition-opacity duration-700 max-w-[90vw] max-h-[60vh]">
-      <img id="art-image" class="rounded-2xl mx-auto shadow-xl max-h-[60vh] object-contain" src="" alt="Artwork" />
-      <p id="art-title" class="mt-2 text-sm text-white/60 italic"></p>
+    <!-- Button -->
+    <div>
+      <button
+        onclick="loadWisdom()"
+        class="px-8 py-3 text-lg font-semibold rounded-full bg-white/40 dark:bg-white/10 hover:bg-white/60 dark:hover:bg-white/20 backdrop-blur-md text-gray-800 dark:text-white shadow transition-all duration-300 hover:scale-105">
+        ✨ Next Wisdom
+      </button>
     </div>
 
-    <!-- Button -->
-    <button
-      onclick="loadWisdom()"
-      class="mt-10 px-6 py-3 text-lg font-medium rounded-full backdrop-blur bg-white/30 dark:bg-white/10 hover:bg-white/40 dark:hover:bg-white/20 transition transform hover:-translate-y-1">
-      Next Wisdom ✨
-    </button>
-
     <!-- Footer -->
-    <footer class="mt-12 text-sm text-white/70">
-      Made with 💜 and Met Art
+    <footer class="text-sm text-gray-600 dark:text-gray-400 pt-10">
+      Made with 💜 in stillness
     </footer>
 
-    <script>
-      const wisdomText = document.getElementById("wisdom-text");
-      const loader = document.getElementById("loader");
-      const artImage = document.getElementById("art-image");
-      const artTitle = document.getElementById("art-title");
-      const artContainer = document.getElementById("art-container");
+  </div>
 
-      const fallbackWisdom = [
-        "Be here now.",
-        "This too shall pass.",
-        "Let go or be dragged.",
-        "The quieter you become, the more you can hear.",
-        "Less is more.",
-        "Do one thing at a time.",
-        "Inhale peace, exhale doubt.",
-        "Simplicity is the ultimate sophistication.",
-        "Stillness speaks.",
-        "Let it be.",
-        "Flow with the river, not against it.",
-        "Be like water.",
-        "The present moment is enough.",
-        "Softness is strength.",
-        "Breathe, and let go.",
-        "Accept what is.",
-        "Trust the process.",
-      ];
+  <script>
+    const fallbackWisdom = [
+      "Be here now.",
+      "This too shall pass.",
+      "Let go or be dragged.",
+      "The quieter you become, the more you can hear.",
+      "Less is more.",
+      "Do one thing at a time.",
+      "Inhale peace, exhale doubt.",
+      "What you resist, persists.",
+      "Stillness speaks.",
+      "Let it be.",
+      "Detach and observe.",
+      "The present moment is enough.",
+      "Trust the process.",
+      "Be like water.",
+      "Softness is strength.",
+      "Quiet the mind, the soul will speak.",
+      "Do less, feel more.",
+      "The sky does not judge the weather.",
+      "Return to your breath."
+    ];
 
-      const searchTerms = ["peace", "stillness", "cloud", "sky", "tree", "light", "nature", "calm", "meditation"];
+    const quoteText = document.getElementById('wisdom-text');
+    const loader = document.getElementById('loader');
 
-      async function loadWisdom() {
-        loader.classList.remove("opacity-0", "pointer-events-none");
-        wisdomText.classList.add("opacity-0");
-        artContainer.classList.remove("opacity-100");
-        artContainer.classList.add("opacity-0");
+    function fadeInWords(text, container) {
+      container.innerHTML = '';
+      const words = text.split(' ');
+      words.forEach((word, index) => {
+        const span = document.createElement('span');
+        span.textContent = word;
+        span.className = 'opacity-0 blur-sm transition-all duration-700 ease-out';
+        container.appendChild(span);
 
-        try {
-          const [quote, imageData] = await Promise.all([getQuote(), getArtwork()]);
-          setTimeout(() => {
-            wisdomText.textContent = quote;
-            wisdomText.classList.remove("opacity-0");
-            artImage.src = imageData.image;
-            artTitle.textContent = imageData.title || "";
-            artContainer.classList.add("opacity-100");
-            loader.classList.add("opacity-0", "pointer-events-none");
-          }, 400);
-        } catch (e) {
-          wisdomText.textContent = getFallback();
-          loader.classList.add("opacity-0", "pointer-events-none");
-        }
-      }
-
-      async function getQuote() {
-        const res = await fetch("https://api.adviceslip.com/advice", { cache: "no-store" });
-        const data = await res.json();
-        return data?.slip?.advice ?? getFallback();
-      }
-
-      function getFallback() {
-        return fallbackWisdom[Math.floor(Math.random() * fallbackWisdom.length)];
-      }
-
-      async function getArtwork() {
-        const term = searchTerms[Math.floor(Math.random() * searchTerms.length)];
-        const searchUrl = `https://collectionapi.metmuseum.org/public/collection/v1/search?hasImages=true&q=${term}`;
-        const res = await fetch(searchUrl);
-        const data = await res.json();
-        if (!data.objectIDs || data.objectIDs.length === 0) {
-          return { image: "", title: "" };
-        }
-        const randomId = data.objectIDs[Math.floor(Math.random() * data.objectIDs.length)];
-        const objRes = await fetch(`https://collectionapi.metmuseum.org/public/collection/v1/objects/${randomId}`);
-        const objData = await objRes.json();
-        return {
-          image: objData.primaryImageSmall || "",
-          title: objData.title || "",
-        };
-      }
-
-      // Initial
-      loadWisdom();
-
-      // Dark Mode Toggle
-      const toggleDark = document.getElementById("toggle-dark");
-      const html = document.documentElement;
-      const savedTheme = localStorage.getItem("theme");
-      if (savedTheme === "dark") html.classList.add("dark");
-      toggleDark.addEventListener("click", () => {
-        html.classList.toggle("dark");
-        localStorage.setItem("theme", html.classList.contains("dark") ? "dark" : "light");
+        setTimeout(() => {
+          span.classList.remove('opacity-0', 'blur-sm');
+          span.classList.add('opacity-100', 'blur-0');
+        }, index * 150); // stagger per word
       });
-    </script>
-  </body>
+    }
+
+    async function loadWisdom() {
+      loader.style.opacity = 1;
+      quoteText.style.opacity = 0;
+
+      try {
+        const res = await fetch('https://api.adviceslip.com/advice');
+        const data = await res.json();
+        const quote = `"${data.slip.advice}"`;
+        setTimeout(() => {
+          quoteText.style.opacity = 1;
+          fadeInWords(quote, quoteText);
+          loader.style.opacity = 0;
+        }, 500);
+      } catch (e) {
+        const fallback = `"${fallbackWisdom[Math.floor(Math.random() * fallbackWisdom.length)]}"`;
+        setTimeout(() => {
+          quoteText.style.opacity = 1;
+          fadeInWords(fallback, quoteText);
+          loader.style.opacity = 0;
+        }, 500);
+      }
+    }
+
+    // Initial quote
+    loadWisdom();
+
+    // Dark mode toggle
+    document.getElementById('toggle-dark').addEventListener('click', () => {
+      document.documentElement.classList.toggle('dark');
+    });
+  </script>
+</body>
 </html>
